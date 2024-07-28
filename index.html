@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculator</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+      body {
+        font-family: sans-serif;
+        margin: 0px;
+      }
+
+      a {
+        color: blue;
+        text-decoration: underline;
+      }
+      .display {
+        min-height: 100vh;
+        display: flex;
+        position: relative;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: "VT323", monospace;
+        color: #009900;
+        font-size: 56px;
+        overflow: hidden;
+      }
+      .floating-letter {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        color: #00ff00;
+        font-size: 28px;
+        margin: 0px;
+        /* transition: all 100ms; */
+        z-index: -10;
+      }
+      .fading-letter {
+        font-size: 28px;
+        position: absolute;
+        animation: fade-text 1s linear 0ms 1;
+        animation-fill-mode: forwards;
+      }
+      @keyframes fade-text {
+        from {
+          color: #00ff00;
+        }
+        to {
+          color: #000;
+        }
+      }
+      .display-p {
+        background: #000;
+        z-index: 10;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="input">
+      <form>
+        Enter 1st number:
+        <input type="text" />
+        <br />
+        Enter 2nd number:
+        <input type="text" />
+        <br />
+        <button id="add">Add</button>
+      </form>
+    </div>
+  </body>
+  <script>
+    function getRandomBase64Char() {
+      const base64Chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+      const randomIndex = Math.floor(Math.random() * base64Chars.length);
+      return base64Chars[randomIndex];
+    }
+
+    function addFloatingLetter(parent) {
+      const letter = document.createElement("p");
+      letter.textContent = getRandomBase64Char();
+      letter.className = "floating-letter";
+      letter.style.top = "0px";
+      letter.style.left = `${Math.floor(Math.random() * innerWidth) - 30}px`;
+      parent.appendChild(letter);
+      const letterID = setInterval(() => {
+        letter.textContent = getRandomBase64Char();
+        letter.style.top = `${parseInt(letter.style.top) + 2}rem`;
+        const fadinLetter = document.createElement("p");
+        fadinLetter.className = "fading-letter";
+        fadinLetter.textContent = letter.textContent;
+        fadinLetter.style.top = letter.style.top;
+        fadinLetter.style.left = letter.style.left;
+        parent.appendChild(fadinLetter);
+        if (parseInt(letter.style.top) > innerHeight) {
+          clearInterval(letterID);
+          letter.remove();
+        }
+      }, 100);
+    }
+
+    document.querySelector("form").onsubmit = (e) => e.preventDefault();
+    const add = document.querySelector("#add");
+    const input = document.querySelector("#input");
+    let periodCount = 0;
+    add.onclick = () => {
+      const display = document.createElement("div");
+      input.style.display = "none";
+      document.body.style.backgroundColor = "black";
+      display.classList.add("display");
+      document.body.innerHTML = "";
+      document.body.appendChild(display);
+      const p = document.createElement("p");
+      p.classList.add("display-p");
+      display.appendChild(p);
+      const periodBlinkingID = setInterval(() => {
+        p.textContent = `HACKING NASA${
+          periodCount % 4 === 0
+            ? ""
+            : periodCount % 4 === 1
+            ? "."
+            : periodCount % 4 === 2
+            ? ".."
+            : "..."
+        }`;
+        periodCount++;
+      }, 500);
+      setInterval(() => {
+        addFloatingLetter(display);
+      }, 100);
+      setInterval(() => {
+        clearInterval(periodBlinkingID);
+        p.innerHTML = `NASA HACKED SUCCESSFULLY 😈👍<br><a href="https://youtu.be/dQw4w9WgXcQ">Click here to find out</a>`;
+      }, 5000);
+    };
+    document.querySelector("#add").click();
+  </script>
+</html>
